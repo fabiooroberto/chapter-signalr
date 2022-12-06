@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Chat em grupo";
+}
+<h4 class="display-4 text-center">@ViewData["Title"]</h4>
+<div>
+    <div class="row">
+        <form class="form-inline">
+            <div class="form-group col-md-6">
+                <label for="group-name">Escolher squad</label>
+                <select class="form-control" id="group-name">
+                    <option value="">Selecione</option>
+                    <option>squadWx1</option>
+                    <option>squadBenUp</option>
+                    <option>squadParceiros</option>
+                    <option>squadCorporate</option>
+                    <option>squadEngagement</option>
+                </select>
+            </div>
+            <button type="button" id="join-group" class="btn btn-primary">Entrar</button>
+            <button type="button" id="leave-group" class="btn btn-warning">Sair</button>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="container">
+            <div id="messages" style="background-color: whitesmoke; "></div>
+            <div style="width: 100%; border-left-style: ridge; border-right-style: ridge;">
+                <textarea id="group-message-text"
+                          style="width: 100%; padding: 5px 5px; border-style: hidden;"
+                          placeholder="Digite uma nova mensagem"></textarea>
+            </div>
+            <div style="overflow: auto; border-style: ridge; border-top-style: hidden;">
+                <button type="button" id="groupmsg" class="btn btn-success pull-right">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chatGrupo.js"></script>
