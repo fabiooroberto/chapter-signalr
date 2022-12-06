@@ -2,35 +2,30 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
 
-//Disable the send button until connection is established.
-const generateRandomName = () =>
-    Math.random().toString(36).substring(2, 10);
-
-let username = generateRandomName();
-const promptMessage = 'Enter your name:';
-do {
-    username = prompt(promptMessage, username);
-    if (!username || username.startsWith('_') || username.indexOf('<') > -1 || username.indexOf('>') > -1) {
-        username = '';
-        promptMessage = 'Invalid input. Enter your name:';
+function getCookie(key) {
+    var cookies = document.cookie.split(';').map(c => c.trim());
+    for (var i = 0; i < cookies.length; i++) {
+        if (cookies[i].startsWith(key + '=')) return unescape(cookies[i].slice(key.length + 1));
     }
-} while (!username)
+    return '';
+}
+var username = getCookie('fullName');
 
 const messageInput = document.getElementById('message');
 messageInput.focus();
 
-function createMessageEntry(encodedName, encodedMsg) {
+function createMessageEntry(name, encodedMsg) {
     var entry = document.createElement('div');
     entry.classList.add("message-entry");
-    if (encodedName === "_SYSTEM_") {
+    if (name === "_SYSTEM_") {
         entry.innerHTML = encodedMsg;
         entry.classList.add("alert");
         entry.classList.add("alert-primary");
-    } else if (encodedName === username) {
+    } else if (name === username) {
         entry.classList.add("pull-right");
         entry.innerHTML = `<div class="media">
               <div class="media-body">
-                <h5 class="mt-0">${encodedName}</h5>
+                <h5 class="mt-0">${name}</h5>
                 ${encodedMsg}
               </div>
               <img class="mr-3" src="/img/avatar.png" alt="Generic placeholder image">
@@ -40,7 +35,7 @@ function createMessageEntry(encodedName, encodedMsg) {
         entry.innerHTML = `<div class="media">
               <img class="mr-3" src="/img/avatar.png" alt="Generic placeholder image">
               <div class="media-body">
-                <h5 class="mt-0">${encodedName}</h5>
+                <h5 class="mt-0">${name}</h5>
                 ${encodedMsg}
               </div>
             </div>`;
@@ -52,9 +47,8 @@ function createMessageEntry(encodedName, encodedMsg) {
 function bindConnectionMessage(connection) {
     var messageCallback = function (name, message) {
         if (!message) return;
-        var encodedName = name;
         var encodedMsg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        var messageEntry = createMessageEntry(encodedName, encodedMsg);
+        var messageEntry = createMessageEntry(name, encodedMsg);
 
         var messageBox = document.getElementById('messages');
         messageBox.appendChild(messageEntry);
@@ -66,10 +60,10 @@ function bindConnectionMessage(connection) {
 
 function onConnected(connection) {
     console.log('connection started');
-    connection.send('SendMessageAllAsync', '_SYSTEM_', username + ' entrou no chat');
+    connection.send('SendMessageAllAsync', 'entrou no chat');
     document.getElementById('sendmessage').addEventListener('click', function (event) {
         if (messageInput.value) {
-            connection.send('SendMessageAllAsync', username, messageInput.value);
+            connection.send('SendMessageAllAsync', messageInput.value);
         }
 
         messageInput.value = '';

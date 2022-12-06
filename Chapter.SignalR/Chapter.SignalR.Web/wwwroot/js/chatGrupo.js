@@ -2,10 +2,19 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatGrupo").build();
 
-connection.on("Send", function (groupName, connectionId, message) {
+function getCookie(key) {
+    var cookies = document.cookie.split(';').map(c => c.trim());
+    for (var i = 0; i < cookies.length; i++) {
+        if (cookies[i].startsWith(key + '=')) return unescape(cookies[i].slice(key.length + 1));
+    }
+    return '';
+}
+var username = getCookie('fullName');
+
+connection.on("Send", function (groupName, fullName, message) {
     var entry = document.createElement('div');
     entry.classList.add("message-entry");
-    if (connection.connectionId == connectionId) {
+    if (username == fullName) {
         entry.classList.add("pull-right");
     }
     else {
@@ -14,7 +23,7 @@ connection.on("Send", function (groupName, connectionId, message) {
     entry.innerHTML = `<div class="media">
               <img class="mr-3" src="/img/avatar.png" alt="Generic placeholder image">
               <div class="media-body">
-                <p class="mt-0"><b>${connectionId}</b> (${groupName})</p>
+                <p class="mt-0"><b>${fullName}</b> (${groupName})</p>
                 <p>${message}</p>
               </div>
             </div>`;
